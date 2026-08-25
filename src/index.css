@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #eef1f5;
+  font-family: 'Open Sans', system-ui, sans-serif;
+  color: #1f2933;
+}
+
+/*
+ * Печать: на бумагу уходит только лист A4. Редактор, тулбар и экранное
+ * масштабирование убираются, поля страницы обнуляются — так браузерный
+ * «Сохранить как PDF» даёт ровно то, что видно в превью, с векторным текстом.
+ */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .preview-scroll {
+    overflow: visible !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  .preview-zoom {
+    transform: none !important;
+    width: auto !important;
+    margin: 0 !important;
+  }
+
+  .a4 {
+    box-shadow: none !important;
+    margin: 0 !important;
+    width: 210mm !important;
+    min-height: 0 !important;
+  }
+}
+
+@media print {
+  .preview-frame {
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+  }
+}
+
+@media print {
+  html,
+  body,
+  #root {
+    height: auto !important;
+    overflow: visible !important;
+  }
+}

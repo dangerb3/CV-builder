@@ -1,0 +1,317 @@
+/*
+ * Шаблон «Novo» — вёрстка повторяет исходное резюме из Novoresume.
+ * Все размеры в CSS-пикселях: браузер печатает их как 96 dpi, поэтому
+ * то, что видно в превью, попадает на лист A4 без пересчёта.
+ */
+
+.a4 {
+  --navy: #2e4053;
+  --heading: #46586b;
+  --text: #2b2b2b;
+  --muted: #55606c;
+  --faint: #7c8894;
+  --chip-bg: #a8b3bf;
+  --tick: #9aa5b1;
+
+  /*
+   * Chrome по умолчанию не печатает фоны: без этого тёмная полоса контактов
+   * и подложки чипов уходят в PDF белыми, а белые иконки и светлый текст на
+   * них просто исчезают. print-color-adjust заставляет печатать цвета
+   * независимо от галочки «Фоновая графика» в диалоге печати.
+   * Свойство наследуется, поэтому одного объявления на листе достаточно.
+   */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  background: #fff;
+  color: var(--text);
+  font-family: 'Open Sans', system-ui, sans-serif;
+  font-size: 11px;
+  line-height: 1.35;
+  box-shadow: 0 2px 18px rgb(15 30 50 / 18%);
+}
+
+/* --- Шапка --------------------------------------------------------- */
+
+.novo-header {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 26px 33px 24px;
+}
+
+.novo-photo {
+  width: 104px;
+  height: 104px;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #dde3ea;
+}
+
+.novo-name {
+  margin: 0;
+  font-size: 29px;
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--navy);
+}
+
+.novo-title {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-weight: 400;
+  color: #4c5c6d;
+}
+
+.novo-tagline {
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  color: var(--text);
+}
+
+/* --- Полоса контактов ---------------------------------------------- */
+
+.novo-contacts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px 30px;
+  padding: 14px 33px;
+  background: var(--navy);
+  color: #fff;
+  font-size: 11.5px;
+}
+
+.novo-contact {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.novo-contact svg {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  fill: #fff;
+}
+
+.novo-contact span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- Тело: две колонки --------------------------------------------- */
+
+.novo-body {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 0 26px;
+  /*
+   * Нижнего отступа нет намеренно. Padding в конце потока применяется один
+   * раз, в самом низу документа: полем первой страницы он не становится, зато
+   * способен вытолкнуть за край листа пустую вторую страницу. Воздух снизу
+   * даёт min-height листа.
+   */
+  padding: 20px 33px 0;
+}
+
+.novo-column {
+  min-width: 0;
+}
+
+.novo-section {
+  margin-bottom: 22px;
+}
+
+.novo-section:last-child {
+  margin-bottom: 0;
+}
+
+.novo-section-title--divider {
+  margin-bottom: 8px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #b9c2cb;
+}
+
+.novo-section-title {
+  margin: 0 0 12px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--heading);
+}
+
+/* Запись с «риской» таймлайна слева — как в оригинальном шаблоне. */
+.novo-entry {
+  position: relative;
+  margin-bottom: 16px;
+  break-inside: avoid;
+}
+
+.novo-entry:last-child {
+  margin-bottom: 0;
+}
+
+.novo-entry--ticked::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: -21px;
+  width: 14px;
+  height: 1.5px;
+  background: var(--tick);
+}
+
+/* Заголовок записи и дата в одной строке — период прижат к правому краю. */
+.novo-entry-headline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.novo-entry-dates {
+  flex: none;
+  font-size: 11.5px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.novo-entry-role {
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #1f2b36;
+}
+
+.novo-entry-org {
+  font-size: 14.5px;
+  line-height: 1.25;
+  color: #3f4d5b;
+}
+
+.novo-entry-period {
+  margin-top: 3px;
+  font-size: 10.5px;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.novo-entry-summary {
+  margin-top: 2px;
+  font-size: 10.5px;
+  font-style: italic;
+  line-height: 1.3;
+  color: var(--faint);
+}
+
+.novo-entry-label {
+  margin-top: 5px;
+  font-size: 10.5px;
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* --- Списки достижений --------------------------------------------- */
+
+.novo-bullets {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.novo-bullets li {
+  position: relative;
+  padding-left: 13px;
+  margin-bottom: 5px;
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+
+.novo-bullets li:last-child {
+  margin-bottom: 0;
+}
+
+.novo-bullets li::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  border: 1px solid #7f8b98;
+  border-radius: 50%;
+}
+
+/* Академический стиль: короткое тире вместо кружка. */
+.novo-bullets--dash li {
+  padding-left: 14px;
+}
+
+.novo-bullets--dash li::before {
+  content: '–';
+  top: 0;
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  color: var(--muted);
+}
+
+/* Абзацы без маркеров — для блоков вроде GPA и темы диплома. */
+.novo-bullets--none li {
+  padding-left: 0;
+}
+
+.novo-bullets--none li::before {
+  content: none;
+}
+
+/* Правая колонка уже, поэтому её списки набраны чуть плотнее. */
+.novo-bullets--tight li {
+  margin-bottom: 3px;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+/* --- Навыки --------------------------------------------------------- */
+
+.novo-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.novo-chip {
+  padding: 4px 12px;
+  border-radius: 3px;
+  background: var(--chip-bg);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+/* --- Проекты и свободный текст -------------------------------------- */
+
+.novo-project-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2b36;
+}
+
+.novo-project-name .novo-project-link {
+  font-weight: 400;
+  color: #3f4d5b;
+}
+
+.novo-text-body {
+  font-size: 11.5px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
