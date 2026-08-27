@@ -22,12 +22,15 @@ export function A4Preview({
   doc,
   lang,
   zoom,
+  hidden,
   onFitScale,
 }: {
   doc: ResumeDoc;
   lang: Lang;
   /** null — вписать по ширине контейнера. */
   zoom: number | null;
+  /** Панель убрана с экрана (узкий экран, открыт редактор). */
+  hidden: boolean;
   onFitScale: (scale: number) => void;
 }) {
   const frameRef = useRef<HTMLDivElement>(null);
@@ -42,7 +45,13 @@ export function A4Preview({
     if (!frame || !page) return;
 
     const measure = () => {
-      const available = frame.clientWidth - 48;
+      // У скрытой панели ширина нулевая — масштаб бы схлопнулся в ноль.
+      if (frame.clientWidth === 0) return;
+
+      // Падинг рамки зависит от брейкпоинта, поэтому берём фактический.
+      const style = getComputedStyle(frame);
+      const padding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+      const available = frame.clientWidth - padding;
       const scale = Math.min(1, available / PAGE_WIDTH);
       setFit(scale);
       onFitScale(scale);
@@ -67,7 +76,12 @@ export function A4Preview({
     observer.observe(frame);
     observer.observe(page);
     return () => observer.disconnect();
-  }, [zoom, onFitScale]);
+    /*
+     * `hidden` в зависимостях — не декорация: на возвращении панели из
+     * display:none ResizeObserver сам не срабатывает, и лист остался бы в
+     * масштабе, посчитанном для другой ширины (или в начальном 0.7).
+     */
+  }, [zoom, hidden, onFitScale]);
 
   const scale = zoom ?? fit;
   /** offsetHeight округляется до целых, а 297 мм — это 1122.5 px. */
@@ -77,14 +91,14 @@ export function A4Preview({
   const overflow = contentHeight - (pages - 1) * PAGE_HEIGHT;
 
   return (
-    <div ref={frameRef} className="preview-scroll h-full overflow-auto bg-slate-200 p-6">
+    <div ref={frameRef} className="preview-scroll h-full overflow-auto bg-slate-200 p-3 sm:p-6">
       <div className="no-print mx-auto mb-3 flex justify-center" style={{ width: PAGE_WIDTH * scale }}>
         {pages === 1 ? (
-          <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800">
+          <span className="max-w-full rounded-full bg-emerald-100 px-3 py-1 text-center text-xs font-medium text-emerald-800">
             Помещается на одну страницу
           </span>
         ) : (
-          <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-900">
+          <span className="max-w-full rounded-full bg-amber-100 px-3 py-1 text-center text-xs font-medium text-amber-900">
             {pages} страницы — за край первой уходит {toMm(overflow)} мм
           </span>
         )}
