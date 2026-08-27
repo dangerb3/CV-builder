@@ -13,6 +13,25 @@ const CONTACT_KINDS: { kind: ContactKind; name: string }[] = [
   { kind: 'website', name: 'Сайт' },
 ];
 
+/**
+ * Пустой слот фото. Голый серый круг читался как «что-то не загрузилось»;
+ * силуэт сразу говорит, что здесь ждут портрет.
+ */
+function PhotoPlaceholder() {
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-slate-200 text-slate-400"
+      fill="currentColor"
+      role="img"
+      aria-label="Фото не загружено"
+    >
+      <circle cx="32" cy="25" r="11" />
+      <path d="M32 39c-9.4 0-17 6.3-17 14.1V64h34V53.1C49 45.3 41.4 39 32 39Z" />
+    </svg>
+  );
+}
+
 export function BasicsEditor({ basics }: { basics: Basics }) {
   const updateBasics = useResumeStore((s) => s.updateBasics);
   const addContact = useResumeStore((s) => s.addContact);
@@ -31,14 +50,18 @@ export function BasicsEditor({ basics }: { basics: Basics }) {
       <h2 className="mb-3 text-sm font-bold text-slate-800">Шапка</h2>
 
       <div className="mb-3 flex items-center gap-3">
-        <img
-          src={basics.photo || undefined}
-          alt=""
-          className="h-16 w-16 rounded-full bg-slate-200 object-cover"
-        />
+        {basics.photo ? (
+          <img
+            src={basics.photo}
+            alt=""
+            className="h-16 w-16 shrink-0 rounded-full bg-slate-200 object-cover"
+          />
+        ) : (
+          <PhotoPlaceholder />
+        )}
         <div className="flex flex-col gap-1.5">
           <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-100">
-            Заменить фото
+            {basics.photo ? 'Заменить фото' : 'Загрузить фото'}
             <input type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
           </label>
           {basics.photo && (
